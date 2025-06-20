@@ -16,7 +16,15 @@ const videoIds = [
   'qP1hJLepOhw',
   'th1bLBuLdc4',
   'ij8M2RZTPCo',
-  'CtmxTj9pKqg'
+  'CtmxTj9pKqg',
+  '5DaVnriHhPc',
+  'V_5osvOhtZ4',
+  '9hiCRevJlv0',
+  'AI9Yroa_Gz8',
+  'YPW_HeOHA1E',
+  'srBHgLGbG8I',
+  'tCRPUv8V22o',
+  'RYJMZ8FAwLE'
 ]
 </script>
 
