@@ -6,7 +6,7 @@
       </button>
       <div id="player" class="absolute outline- h-[calc(100dvh+1000px)] w-full top-[-500px]"></div>
       <div class="absolute inset-0 cursor-pointer" @click="nextVideo"></div>
-      <WhiteNoiseCanvas :show="showNoise" ref="whiteNoiseRef" />
+      <WhiteNoiseCanvas :show="showNoise" :isMuted="isMuted" ref="whiteNoiseRef" />
     </div>
   </div>
 </template>
@@ -26,6 +26,7 @@ const currentIndex = ref(0)
 let player = null
 const showNoise = ref(true)
 const whiteNoiseRef = ref(null)
+const isMuted = ref(false)
 
 function isValidVideoId(id) {
   return typeof id === 'string' && /^[a-zA-Z0-9_-]{11}$/.test(id)
@@ -67,7 +68,14 @@ function createPlayer() {
     },
     events: {
       onStateChange: onPlayerStateChange,
-      onError: onPlayerError
+      onError: onPlayerError,
+      onReady: (event) => {
+        if (isMuted.value) {
+          event.target.mute()
+        } else {
+          event.target.unMute()
+        }
+      }
     }
   })
 }
@@ -75,7 +83,9 @@ function createPlayer() {
 function onPlayerStateChange(event) {
   if (event.data === window.YT.PlayerState.BUFFERING || event.data === window.YT.PlayerState.UNSTARTED || event.data === window.YT.PlayerState.CUED) {
     showNoise.value = true
-    whiteNoiseRef.value?.startWhiteNoiseAudio()
+    if (!isMuted.value) {
+        whiteNoiseRef.value?.startWhiteNoiseAudio()
+    }
   } else if (event.data === window.YT.PlayerState.PLAYING) {
     showNoise.value = false
     whiteNoiseRef.value?.stopWhiteNoiseAudio()
@@ -119,6 +129,8 @@ function nextVideo() {
     showNoise.value = true
     whiteNoiseRef.value?.startWhiteNoiseAudio()
     player.loadVideoById(id)
+    if (isMuted.value && player.mute) player.mute()
+    if (!isMuted.value && player.unMute) player.unMute()
   }
 }
 
@@ -131,8 +143,12 @@ function prevVideo() {
   }
   if (player && player.loadVideoById) {
     showNoise.value = true
-    whiteNoiseRef.value?.startWhiteNoiseAudio()
+     if (!isMuted.value) {
+        whiteNoiseRef.value?.startWhiteNoiseAudio()
+     }
     player.loadVideoById(id)
+    if (isMuted.value && player.mute) player.mute()
+    if (!isMuted.value && player.unMute) player.unMute()
   }
 }
 
@@ -153,6 +169,15 @@ function handleKeydown(e) {
   } else if (e.code === 'ArrowLeft') {
     e.preventDefault()
     prevVideo()
+  } else if (e.key === 'm' || e.key === 'M') {
+    isMuted.value = !isMuted.value
+    if (player && player.mute && player.unMute) {
+      if (isMuted.value) {
+        player.mute()
+      } else {
+        player.unMute()
+      }
+    }
   }
 }
 

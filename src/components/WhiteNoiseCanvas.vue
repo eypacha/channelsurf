@@ -6,7 +6,8 @@
 import { ref, watch, onMounted, onBeforeUnmount, defineProps, defineExpose } from 'vue'
 
 const props = defineProps({
-  show: Boolean
+  show: Boolean,
+  isMuted: Boolean // <-- Añadido para recibir el estado de mute
 })
 
 const canvasRef = ref(null)
@@ -43,6 +44,7 @@ function stopWhiteNoise() {
 }
 
 function startWhiteNoiseAudio() {
+  if (props.isMuted) return // <-- No iniciar audio si está muteado
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   }
@@ -78,12 +80,22 @@ watch(() => props.show, (val) => {
   }
 })
 
+// Nuevo watcher para isMuted
+watch(() => props.isMuted, (val) => {
+  if (val) {
+    stopWhiteNoiseAudio()
+  } else if (props.show) {
+    startWhiteNoiseAudio()
+  }
+})
+
 onMounted(() => {
   if (props.show) drawWhiteNoise()
 })
 
 onBeforeUnmount(() => {
   stopWhiteNoise()
+  stopWhiteNoiseAudio()
 })
 </script>
 
