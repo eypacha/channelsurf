@@ -6,13 +6,14 @@
       </button>
       <div id="player" class="absolute outline- h-[calc(100dvh+1000px)] w-full top-[-500px]"></div>
       <div class="absolute inset-0 cursor-pointer" @click="nextVideo"></div>
-      <canvas v-show="showNoise" ref="noiseCanvas" class="fixed inset-0 w-full h-full z-30 pointer-events-none" />
+      <WhiteNoiseCanvas :show="showNoise" ref="whiteNoiseRef" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
+import WhiteNoiseCanvas from './WhiteNoiseCanvas.vue'
 
 const props = defineProps({
   videoIds: {
@@ -23,11 +24,8 @@ const props = defineProps({
 
 const currentIndex = ref(0)
 let player = null
-const noiseCanvas = ref(null)
-let animationFrameId = null
 const showNoise = ref(true)
-let audioCtx = null
-let noiseSource = null
+const whiteNoiseRef = ref(null)
 
 function isValidVideoId(id) {
   return typeof id === 'string' && /^[a-zA-Z0-9_-]{11}$/.test(id)
@@ -77,12 +75,10 @@ function createPlayer() {
 function onPlayerStateChange(event) {
   if (event.data === window.YT.PlayerState.BUFFERING || event.data === window.YT.PlayerState.UNSTARTED || event.data === window.YT.PlayerState.CUED) {
     showNoise.value = true
-    drawWhiteNoise()
-    startWhiteNoiseAudio()
+    whiteNoiseRef.value?.startWhiteNoiseAudio()
   } else if (event.data === window.YT.PlayerState.PLAYING) {
     showNoise.value = false
-    cancelAnimationFrame(animationFrameId)
-    stopWhiteNoiseAudio()
+    whiteNoiseRef.value?.stopWhiteNoiseAudio()
   } else if (event.data === window.YT.PlayerState.ENDED) {
     nextVideo()
   }
@@ -121,8 +117,7 @@ function nextVideo() {
   }
   if (player && player.loadVideoById) {
     showNoise.value = true
-    drawWhiteNoise()
-    startWhiteNoiseAudio()
+    whiteNoiseRef.value?.startWhiteNoiseAudio()
     player.loadVideoById(id)
   }
 }
@@ -137,53 +132,6 @@ function toggleFullscreen() {
   }
 }
 
-function startWhiteNoiseAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-  }
-  if (noiseSource) return
-  const bufferSize = 2 * audioCtx.sampleRate
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate)
-  const output = noiseBuffer.getChannelData(0)
-  for (let i = 0; i < bufferSize; i++) {
-    output[i] = Math.random() * 2 - 1
-  }
-  noiseSource = audioCtx.createBufferSource()
-  noiseSource.buffer = noiseBuffer
-  noiseSource.loop = true
-  noiseSource.connect(audioCtx.destination)
-  noiseSource.start(0)
-}
-
-function stopWhiteNoiseAudio() {
-  if (noiseSource) {
-    noiseSource.stop()
-    noiseSource.disconnect()
-    noiseSource = null
-  }
-}
-
-function drawWhiteNoise() {
-  if (!showNoise.value) return
-  const canvas = noiseCanvas.value
-  if (!canvas) return
-  const ctx = canvas.getContext('2d')
-  const width = window.innerWidth / 2
-  const height = window.innerHeight / 2
-  if (canvas.width !== width || canvas.height !== height) {
-    canvas.width = width
-    canvas.height = height
-  }
-  const imageData = ctx.createImageData(width, height)
-  const buffer = new Uint32Array(imageData.data.buffer)
-  for (let i = 0; i < buffer.length; i++) {
-    const color = Math.random() > 0.5 ? 0xffffffff : 0xff000000
-    buffer[i] = color
-  }
-  ctx.putImageData(imageData, 0, 0)
-  animationFrameId = requestAnimationFrame(drawWhiteNoise)
-}
-
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -196,16 +144,12 @@ onMounted(async () => {
   await loadYouTubeAPI()
   createPlayer()
   showNoise.value = true
-  drawWhiteNoise()
-  startWhiteNoiseAudio()
+  whiteNoiseRef.value?.startWhiteNoiseAudio()
 })
 </script>
 
 <style scoped>
 #player iframe {
   border: none;
-}
-canvas {
-  display: block;
 }
 </style>
