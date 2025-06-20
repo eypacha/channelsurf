@@ -1,24 +1,14 @@
 {
-  "app": {
-    "title": "Aplicación de Ejemplo",
-    "description": "Esta es una aplicación de ejemplo para demostrar la internacionalización.",
-    "welcome": "Bienvenido a nuestra aplicación"
-  },
-  "footer": {
-    "rights": "Todos los derechos reservados."
-  },
-  "sections": {
-    "section1": {
-      "title": "Sección 1",
-      "description": "Esta es la descripción de la Sección 1."
-    },
-    "section2": {
-      "title": "Sección 2",
-      "description": "Esta es la descripción de la Sección 2."
-    },
-    "section3": {
-      "title": "Sección 3",
-      "description": "Esta es la descripción de la Sección 3."
-    }
+  "player": {
+    "help": "Ayuda",
+    "helpTitle": "Not a TV",
+    "helpSubtitle": "Zapping without a context",
+    "quickControls": "Controles rápidos:",
+    "fullscreen": "Pantalla completa",
+    "mute": "Silenciar/activar sonido",
+    "next": "Siguiente canal",
+    "prev": "Canal anterior",
+    "close": "Cerrar",
+    "space": "Espacio"
   }
 }

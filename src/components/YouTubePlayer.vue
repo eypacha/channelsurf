@@ -1,12 +1,43 @@
 <template>
   <div class="video-container bg-black h-[100dvh]">
     <div class="video-wrapper relative h-[100dvh] w-full overflow-hidden">
-      <button class="absolute top-4 right-4 z-20 bg-black/60 rounded-full cursor-pointer p-2 hover:bg-black/80 transition" @click="toggleFullscreen">
-        <img src="@/assets/fullscreen.svg" alt="Pantalla completa" class="w-7 h-7" />
-      </button>
       <div id="player" class="absolute outline- h-[calc(100dvh+1000px)] w-full top-[-500px]"></div>
       <div class="absolute inset-0 cursor-pointer" @click="nextVideo"></div>
       <WhiteNoiseCanvas :show="showNoise" :isMuted="isMuted" ref="whiteNoiseRef" />
+      <!-- Botón de ayuda -->
+      <button
+        class="absolute top-4 right-4 z-40 bg-white/80 hover:bg-white text-black w-8 h-8 flex items-center justify-center text-xl font-bold shadow cursor-pointer"
+        @click="showHelp = true"
+        :aria-label="$t('player.help')"
+      >?</button>
+      <!-- Modal de ayuda -->
+      <div
+        v-if="showHelp"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        @click.self="showHelp = false"
+      >
+        <div class="bg-black text-gray-100 shadow-lg p-6 max-w-xs w-full relative">
+          <button
+            class="absolute top-2 right-4 text-gray-100 hover:text-white text-xl cursor-pointer"
+            @click="showHelp = false"
+            :aria-label="$t('player.close')"
+          >&times;</button>
+          <h2 class="text-lg font-semibold mb-2">{{ $t('player.helpTitle') }}</h2>
+          <p class="mb-4 text-sm">{{ $t('player.helpSubtitle') }}</p>
+          <h3 class="font-semibold mb-2 text-sm">{{ $t('player.quickControls') }}</h3>
+          <ul class="text-sm space-y-1">
+            <li><kbd class="bg-gray-100 text-black px-1">F</kbd> — {{ $t('player.fullscreen') }}</li>
+            <li><kbd class="bg-gray-100 text-black px-1">M</kbd> — {{ $t('player.mute') }}</li>
+            <li>
+              <kbd class="bg-gray-100 text-black px-1">{{ $t('player.space') }}</kbd>
+              o
+              <kbd class="bg-gray-100 text-black px-1">→</kbd>
+              — {{ $t('player.next') }}
+            </li>
+            <li><kbd class="bg-gray-100 text-black px-1">←</kbd> — {{ $t('player.prev') }}</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +58,7 @@ let player = null
 const showNoise = ref(true)
 const whiteNoiseRef = ref(null)
 const isMuted = ref(false)
+const showHelp = ref(false)
 
 function isValidVideoId(id) {
   return typeof id === 'string' && /^[a-zA-Z0-9_-]{11}$/.test(id)
