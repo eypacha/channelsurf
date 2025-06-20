@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, onBeforeUnmount } from 'vue'
 import WhiteNoiseCanvas from './WhiteNoiseCanvas.vue'
 
 const props = defineProps({
@@ -122,6 +122,20 @@ function nextVideo() {
   }
 }
 
+function prevVideo() {
+  currentIndex.value = (currentIndex.value - 1 + props.videoIds.length) % props.videoIds.length
+  const id = props.videoIds[currentIndex.value]
+  if (!isValidVideoId(id)) {
+    console.error(`ID de video no válido: ${id}`)
+    return
+  }
+  if (player && player.loadVideoById) {
+    showNoise.value = true
+    whiteNoiseRef.value?.startWhiteNoiseAudio()
+    player.loadVideoById(id)
+  }
+}
+
 function toggleFullscreen() {
   const el = document.querySelector('.video-container')
   if (!el) return
@@ -129,6 +143,16 @@ function toggleFullscreen() {
     document.exitFullscreen()
   } else {
     el.requestFullscreen()
+  }
+}
+
+function handleKeydown(e) {
+  if (e.code === 'Space' || e.code === 'ArrowRight') {
+    e.preventDefault()
+    nextVideo()
+  } else if (e.code === 'ArrowLeft') {
+    e.preventDefault()
+    prevVideo()
   }
 }
 
@@ -145,6 +169,11 @@ onMounted(async () => {
   createPlayer()
   showNoise.value = true
   whiteNoiseRef.value?.startWhiteNoiseAudio()
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
