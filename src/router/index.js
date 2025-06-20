@@ -7,7 +7,6 @@ const routes = [
     name: 'Home',
     component: HomeView
   },
-  ,
   {
     path: '/:pathMatch(.*)*',
     redirect: '/'
