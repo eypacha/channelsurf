@@ -1,6 +1,6 @@
 <template>
   <div class="home-view">
-    <YouTubePlayer :video-ids="videoIds" />
+    <YouTubePlayer :videoIds="videoIds" />
   </div>
 </template>
 
