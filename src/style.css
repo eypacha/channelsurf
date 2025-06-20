@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Scroll suave para toda la página */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 65px; /* Espacio superior al hacer scroll */
+  scroll-padding-bottom: 20px; /* Espacio inferior al hacer scroll */
+}
+
+body {
+  scroll-behavior: smooth;
+  font-weight: 300;
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 87.5;
+}
