@@ -163,22 +163,29 @@ function toggleFullscreen() {
 }
 
 function handleKeydown(e) {
-  if (e.code === 'Space' || e.code === 'ArrowRight') {
-    e.preventDefault()
-    nextVideo()
-  } else if (e.code === 'ArrowLeft') {
-    e.preventDefault()
-    prevVideo()
-  } else if (e.key === 'm' || e.key === 'M') {
-    isMuted.value = !isMuted.value
-    if (player && player.mute && player.unMute) {
-      if (isMuted.value) {
-        player.mute()
-      } else {
-        player.unMute()
-      }
+    switch (true) {
+        case e.code === 'Space' || e.code === 'ArrowRight':
+            e.preventDefault()
+            nextVideo()
+            break
+        case e.code === 'ArrowLeft':
+            e.preventDefault()
+            prevVideo()
+            break
+        case e.key === 'm' || e.key === 'M':
+            isMuted.value = !isMuted.value
+            if (player && player.mute && player.unMute) {
+                if (isMuted.value) {
+                    player.mute()
+                } else {
+                    player.unMute()
+                }
+            }
+            break
+        case e.key === 'f' || e.key === 'F':
+            toggleFullscreen()
+            break
     }
-  }
 }
 
 function shuffleArray(array) {
