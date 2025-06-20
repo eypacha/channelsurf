@@ -1,5 +1,5 @@
-# Vue 3 + Vite
+# Not a TV (channelsurf)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This project is an interactive web application inspired by the experience of channel surfing on traditional television, but using YouTube videos. It is inspired by NaiveTV, but is based on the YouTube API instead of self-hosted video. The purpose is to simulate channel switching with both visual and audio white noise between videos, evoking the feeling of analog TV.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+> Project created with Vue 3 + Vite.
